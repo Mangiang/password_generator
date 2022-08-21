@@ -1,6 +1,10 @@
 # Password Generator
+<a href='https://github.com/shivamkapasia0' target="_blank"><img alt='Windows' src='https://img.shields.io/badge/Windows-100000?style=flat&logo=Windows&logoColor=white&labelColor=505050&color=8bb803'/></a>
+<a href='https://github.com/shivamkapasia0' target="_blank"><img alt='Android' src='https://img.shields.io/badge/Android-100000?style=flat&logo=Android&logoColor=white&labelColor=505050&color=8bb803'/></a>
 
 A simple password generator
+
+![PasswordGeneratorScreenshot](./docs/passwordGeneratorScreenshot.png)
 
 ## How to run
 

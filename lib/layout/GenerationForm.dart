@@ -58,7 +58,7 @@ class _GenerationFormState extends State<GenerationForm> {
                   return PasswordInput(
                     onChanged: (newValue) => state.updateblacklist(newValue),
                     enableVisibility: false,
-                    label: "Blacklist",
+                    label: "Blacklist characters",
                   );
                 },
               ),
