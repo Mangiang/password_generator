@@ -5,24 +5,48 @@ class PasswordState extends ChangeNotifier {
   String passphrase2 = "";
   int desiredLength = 1;
   String password = "";
+  bool includeLowerCase = true;
+  bool includeUpperCase = true;
+  bool includeNumbers = true;
+  bool includeSymbols = true;
 
-  void UpdateFirstPassphrase(String newPassphrase) {
+  void updateFirstPassphrase(String newPassphrase) {
     passphrase1 = newPassphrase;
     notifyListeners();
   }
 
-  void UpdateSecondPassphrase(String newPassphrase) {
+  void updateSecondPassphrase(String newPassphrase) {
     passphrase2 = newPassphrase;
     notifyListeners();
   }
 
-  void UpdateDesiredLength(int newDesiredLength) {
+  void updateDesiredLength(int newDesiredLength) {
     desiredLength = newDesiredLength;
     notifyListeners();
   }
 
-  void UpdatePassword(String newPassphrase) {
+  void updatePassword(String newPassphrase) {
     password = newPassphrase;
+    notifyListeners();
+  }
+
+  void updateIncludeLowerCase(bool? newValue) {
+    includeLowerCase = newValue ?? true;
+    notifyListeners();
+  }
+
+  void updateIncludeUpperCase(bool? newValue) {
+    includeUpperCase = newValue ?? true;
+    notifyListeners();
+  }
+
+  void updateIncludeNumber(bool? newValue) {
+    includeNumbers = newValue ?? true;
+    notifyListeners();
+  }
+
+  void updateIncludeSymbols(bool? newValue) {
+    includeSymbols = newValue ?? true;
     notifyListeners();
   }
 }
