@@ -50,45 +50,59 @@ class _GenerationFormState extends State<GenerationForm> {
             },
           ),
           const SizedBox(height: 40),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Column(
+              Consumer<PasswordState>(
+                builder: (context, state, child) {
+                  return PasswordInput(
+                    onChanged: (newValue) => state.updateblacklist(newValue),
+                    enableVisibility: false,
+                    label: "Blacklist",
+                  );
+                },
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Consumer<PasswordState>(
-                    builder: (context, state, child) => CustomCheckbox(
-                      label: "Include lower case",
-                      isChecked: state.includeLowerCase,
-                      onChanged: state.updateIncludeLowerCase,
-                    ),
+                  Column(
+                    children: [
+                      Consumer<PasswordState>(
+                        builder: (context, state, child) => CustomCheckbox(
+                          label: "Include lower case",
+                          isChecked: state.includeLowerCase,
+                          onChanged: state.updateIncludeLowerCase,
+                        ),
+                      ),
+                      Consumer<PasswordState>(
+                        builder: (context, state, child) => CustomCheckbox(
+                          label: "Include upper case",
+                          isChecked: state.includeUpperCase,
+                          onChanged: state.updateIncludeUpperCase,
+                        ),
+                      ),
+                    ],
                   ),
-                  Consumer<PasswordState>(
-                    builder: (context, state, child) => CustomCheckbox(
-                      label: "Include upper case",
-                      isChecked: state.includeUpperCase,
-                      onChanged: state.updateIncludeUpperCase,
-                    ),
+                  Column(
+                    children: [
+                      Consumer<PasswordState>(
+                        builder: (context, state, child) => CustomCheckbox(
+                          label: "Include numbers",
+                          isChecked: state.includeNumbers,
+                          onChanged: state.updateIncludeNumber,
+                        ),
+                      ),
+                      Consumer<PasswordState>(
+                        builder: (context, state, child) => CustomCheckbox(
+                          label: "Include symbols",
+                          isChecked: state.includeSymbols,
+                          onChanged: state.updateIncludeSymbols,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-              Column(
-                children: [
-                  Consumer<PasswordState>(
-                    builder: (context, state, child) => CustomCheckbox(
-                      label: "Include numbers",
-                      isChecked: state.includeNumbers,
-                      onChanged: state.updateIncludeNumber,
-                    ),
-                  ),
-                  Consumer<PasswordState>(
-                    builder: (context, state, child) => CustomCheckbox(
-                      label: "Include symbols",
-                      isChecked: state.includeSymbols,
-                      onChanged: state.updateIncludeSymbols,
-                    ),
-                  ),
-                ],
-              )
             ],
           ),
         ],

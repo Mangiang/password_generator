@@ -62,7 +62,8 @@ class PasswordGenerator {
         includeLowercase: state.includeLowerCase,
         includeUppercase: state.includeUpperCase,
         includeNumbers: state.includeNumbers,
-        includeSymbols: state.includeSymbols);
+        includeSymbols: state.includeSymbols,
+        blacklist: state.blacklist);
 
     if (charsPool.isEmpty) return "";
 
@@ -86,13 +87,16 @@ class PasswordGenerator {
       {bool includeLowercase = true,
       bool includeUppercase = true,
       bool includeNumbers = true,
-      bool includeSymbols = true}) {
+      bool includeSymbols = true,
+      String blacklist = ""}) {
+    List<int> blacklistChar = utf8.encode(blacklist);
     List<int> charsPool = [
       ...(includeUppercase ? uppercase : []),
       ...(includeLowercase ? lowercase : []),
       ...(includeNumbers ? numbers : []),
       ...(includeSymbols ? symbols : [])
     ];
+    charsPool = charsPool.where((elt) => !blacklistChar.contains(elt)).toList();
 
     if (charsPool.isEmpty) return charsPool;
 

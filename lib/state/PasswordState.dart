@@ -5,6 +5,7 @@ class PasswordState extends ChangeNotifier {
   String passphrase2 = "";
   int desiredLength = 1;
   String password = "";
+  String blacklist = "";
   bool includeLowerCase = true;
   bool includeUpperCase = true;
   bool includeNumbers = true;
@@ -47,6 +48,11 @@ class PasswordState extends ChangeNotifier {
 
   void updateIncludeSymbols(bool? newValue) {
     includeSymbols = newValue ?? true;
+    notifyListeners();
+  }
+
+  void updateblacklist(String newBlacklist) {
+    blacklist = newBlacklist;
     notifyListeners();
   }
 }

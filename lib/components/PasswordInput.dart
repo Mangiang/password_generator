@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 
 class PasswordInput extends StatefulWidget {
-  const PasswordInput({Key? key, required this.onChanged, this.label, this.enabled, this.enableCopy, this.value})
+  const PasswordInput(
+      {Key? key,
+      required this.onChanged,
+      this.label,
+      this.enabled,
+      this.enableCopy,
+      this.enableVisibility = true,
+      this.value})
       : super(key: key);
 
   final void Function(String) onChanged;
   final String? label;
   final bool? enabled;
   final bool? enableCopy;
+  final bool? enableVisibility;
   final String? value;
 
   @override
@@ -45,7 +53,7 @@ class _PasswordInputState extends State<PasswordInput> {
               fit: FlexFit.tight,
               child: TextField(
                 controller: textController,
-                obscureText: !isPasswordVisible,
+                obscureText: widget.enableVisibility != null && !widget.enableVisibility! ? false : !isPasswordVisible,
                 enableSuggestions: false,
                 autocorrect: false,
                 minLines: 1,
@@ -68,24 +76,25 @@ class _PasswordInputState extends State<PasswordInput> {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Material(
-                  color: Colors.transparent,
-                  shape: const CircleBorder(),
-                  clipBehavior: Clip.hardEdge,
-                  child: IconButton(
-                    icon: Icon(
-                      isPasswordVisible
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: Colors.white,
+                if (widget.enableVisibility == true)
+                  Material(
+                    color: Colors.transparent,
+                    shape: const CircleBorder(),
+                    clipBehavior: Clip.hardEdge,
+                    child: IconButton(
+                      icon: Icon(
+                        isPasswordVisible
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          isPasswordVisible = !isPasswordVisible;
+                        });
+                      },
                     ),
-                    onPressed: () {
-                      setState(() {
-                        isPasswordVisible = !isPasswordVisible;
-                      });
-                    },
                   ),
-                ),
                 if (widget.enableCopy == true)
                   Material(
                     color: Colors.transparent,
