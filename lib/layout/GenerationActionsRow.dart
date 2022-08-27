@@ -15,8 +15,6 @@ class ActionsRow extends StatefulWidget {
 }
 
 class _ActionsRowState extends State<ActionsRow> {
-  Color deleteButtonColor = const Color(0xff70383a);
-
   bool areButtonsEnabled(PasswordState state) {
     return state.passphrase1.isNotEmpty &&
         state.passphrase2.isNotEmpty &&
@@ -26,6 +24,15 @@ class _ActionsRowState extends State<ActionsRow> {
   Future<void> handleGeneration(PasswordState state) async {
     if (areButtonsEnabled(state)) {
       state.updatePassword(await PasswordGenerator.getPassword(state));
+    }
+  }
+
+  Future<void> handleDeletion(PasswordState state) async {
+    final response = await showDialog(
+        context: context,
+        builder: (context) => const CustomCheckbox()) as DeleteDialogAction?;
+    if (response == DeleteDialogAction.delete) {
+      PasswordGenerator.removeFromDataFile(state);
     }
   }
 
@@ -40,15 +47,7 @@ class _ActionsRowState extends State<ActionsRow> {
                 type: ButtonType.danger,
                 text: 'Delete entry',
                 enabled: areButtonsEnabled(state),
-                onPressed: () async {
-                  final response = await showDialog(
-                          context: context,
-                          builder: (context) => const CustomCheckbox())
-                      as DeleteDialogAction?;
-                  if (response == DeleteDialogAction.delete) {
-                    PasswordGenerator.removeFromDataFile(state);
-                  }
-                },
+                onPressed: () async => handleDeletion(state),
               ),
             ),
             const SizedBox(width: 50),
