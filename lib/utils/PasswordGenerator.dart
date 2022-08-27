@@ -48,6 +48,18 @@ class PasswordGenerator {
           charIdx
       ];
 
+  static List<int> generateKeyHash(PasswordState state) {
+    final keyByteArray = utf8.encode(state.passphrase1 +
+        state.passphrase2 +
+        state.desiredLength.toString() +
+        state.blacklist +
+        (state.includeLowerCase ? 'L' : '') +
+        (state.includeUpperCase ? 'U' : '') +
+        (state.includeNumbers ? 'N' : '') +
+        (state.includeSymbols ? 'S' : ''));
+    return hashSHA256(keyByteArray);
+  }
+
   static Future<String> getPassword(PasswordState state) async {
     final passphrase1 = state.passphrase1;
     final passphrase2 = state.passphrase2;
@@ -56,10 +68,9 @@ class PasswordGenerator {
     final Map<List<int>, int> map =
         data.map((key, value) => MapEntry(utf8.encode(key), value));
 
-    final keyByteArray = utf8.encode(passphrase2 + passphrase1);
-    final keyHash = hashSHA256(keyByteArray);
-    final byteArray = utf8.encode(passphrase1 + passphrase2);
+    final keyHash = generateKeyHash(state);
     final hashCount = await getHashCount(keyHash, map);
+    final byteArray = utf8.encode(passphrase1 + passphrase2);
     final hash = repeatHash256(byteArray, hashCount);
 
     final encodedPassphrase2 = utf8.encode(passphrase2);
@@ -149,15 +160,10 @@ class PasswordGenerator {
   }
 
   static Future<void> removeFromDataFile(PasswordState state) async {
-    final passphrase1 = state.passphrase1;
-    final passphrase2 = state.passphrase2;
     final data = await FileStore.localData;
-    final Map<String, int> map =
-        data.map((key, value) => MapEntry(key, value));
+    final Map<String, int> map = data.map((key, value) => MapEntry(key, value));
 
-    final keyByteArray = utf8.encode(passphrase2 + passphrase1);
-    final keyHash = hashSHA256(keyByteArray);
-    final hashStr = utf8.decode(keyHash);
+    final hashStr = utf8.decode(generateKeyHash(state));
     if (map.remove(hashStr) != null) {
       await FileStore.writeLocalData(map);
     }
