@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:password_generator/components/DangerButton.dart';
+import 'package:password_generator/components/ValidationButton.dart';
 import 'package:password_generator/state/PasswordState.dart';
-import 'package:password_generator/utils/PasswordGenerator.dart';
 import 'package:provider/provider.dart';
+
+import '../state/PasswordState.dart';
 
 class ActionsRow extends StatefulWidget {
   const ActionsRow({Key? key}) : super(key: key);
@@ -11,15 +14,9 @@ class ActionsRow extends StatefulWidget {
 }
 
 class _ActionsRowState extends State<ActionsRow> {
-  bool generateEnabled = false;
+  Color deleteButtonColor = const Color(0xff70383a);
 
-  Future<void> generatePassword(PasswordState state) async {
-    if (generateEnabled) {
-      state.updatePassword(await PasswordGenerator.getPassword(state));
-    }
-  }
-
-  bool generateEnable(PasswordState state) {
+  bool areButtonsEnabled(PasswordState state) {
     return state.passphrase1.isNotEmpty &&
         state.passphrase2.isNotEmpty &&
         state.desiredLength > 0;
@@ -28,31 +25,18 @@ class _ActionsRowState extends State<ActionsRow> {
   @override
   Widget build(BuildContext context) =>
       Consumer<PasswordState>(builder: (context, state, child) {
-        generateEnabled = generateEnable(state);
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
-              child: ElevatedButton(
-                onPressed: () {},
-                child: const Text('Delete'),
+              child: DangerButton(
+                enabled: areButtonsEnabled(state),
               ),
             ),
             const SizedBox(width: 50),
             Expanded(
-              child: ElevatedButton(
-                onPressed: generateEnabled ? () => generatePassword(state) : null,
-                child: Text(
-                  'Generate',
-                  style: TextStyle(
-                      color: generateEnabled ? Colors.white : Colors.black),
-                ),
-                style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(
-                      generateEnabled
-                          ? const Color(0xff347d39)
-                          : const Color(0xff929292)),
-                ),
+              child: ValidationButton(
+                enabled: areButtonsEnabled(state),
               ),
             ),
           ],

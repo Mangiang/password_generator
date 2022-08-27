@@ -49,21 +49,21 @@ class PasswordGenerator {
       ];
 
   static Future<String> getPassword(PasswordState state) async {
-    String passphrase1 = state.passphrase1;
-    String passphrase2 = state.passphrase2;
-    int desiredLength = state.desiredLength;
+    final passphrase1 = state.passphrase1;
+    final passphrase2 = state.passphrase2;
+    final desiredLength = state.desiredLength;
     final data = await FileStore.localData;
     final Map<List<int>, int> map =
         data.map((key, value) => MapEntry(utf8.encode(key), value));
 
-    List<int> keyByteArray = utf8.encode(passphrase2 + passphrase1);
-    List<int> keyHash = hashSHA256(keyByteArray);
-    List<int> byteArray = utf8.encode(passphrase1 + passphrase2);
+    final keyByteArray = utf8.encode(passphrase2 + passphrase1);
+    final keyHash = hashSHA256(keyByteArray);
+    final byteArray = utf8.encode(passphrase1 + passphrase2);
     final hashCount = await getHashCount(keyHash, map);
-    List<int> hash = repeatHash256(byteArray, hashCount);
+    final hash = repeatHash256(byteArray, hashCount);
 
-    List<int> encodedPassphrase2 = utf8.encode(passphrase2);
-    List<int> charsPool = getShuffledCharactersPool(encodedPassphrase2,
+    final encodedPassphrase2 = utf8.encode(passphrase2);
+    final charsPool = getShuffledCharactersPool(encodedPassphrase2,
         includeLowercase: state.includeLowerCase,
         includeUppercase: state.includeUpperCase,
         includeNumbers: state.includeNumbers,
@@ -72,15 +72,15 @@ class PasswordGenerator {
 
     if (charsPool.isEmpty) return "";
 
-    List<int> encodedResult = getFinalPassword(hash, charsPool, desiredLength);
+    final encodedResult = getFinalPassword(hash, charsPool, desiredLength);
     return utf8.decode(encodedResult);
   }
 
   static List<int> getFinalPassword(
       List<int> hash, List<int> charsPool, int desiredLength) {
-    List<int> result = [];
-    int hashLength = hash.length;
-    int charPoolLength = charsPool.length;
+    final List<int> result = [];
+    final hashLength = hash.length;
+    final charPoolLength = charsPool.length;
     for (int i = 0; i < desiredLength; i++) {
       result.add(charsPool[(hash[i % hashLength] * i) % charPoolLength]);
     }
@@ -105,14 +105,14 @@ class PasswordGenerator {
 
     if (charsPool.isEmpty) return charsPool;
 
-    int saltLength = salt.length;
-    int charPoolLength = charsPool.length;
+    final saltLength = salt.length;
+    final charPoolLength = charsPool.length;
     for (int charIdx = 0; charIdx < charsPool.length; charIdx++) {
-      int charValue = charsPool[charIdx];
-      int rawIdx =
+      final charValue = charsPool[charIdx];
+      final rawIdx =
           charValue + salt[(charValue + charIdx) % saltLength] * charIdx;
 
-      int tmp = charsPool[rawIdx % charPoolLength];
+      final tmp = charsPool[rawIdx % charPoolLength];
       charsPool[charIdx] = tmp;
       charsPool[rawIdx % charPoolLength] = charValue;
     }
@@ -149,19 +149,17 @@ class PasswordGenerator {
   }
 
   static Future<void> removeFromDataFile(PasswordState state) async {
-    String passphrase1 = state.passphrase1;
-    String passphrase2 = state.passphrase2;
+    final passphrase1 = state.passphrase1;
+    final passphrase2 = state.passphrase2;
     final data = await FileStore.localData;
-    final Map<List<int>, int> map =
-        data.map((key, value) => MapEntry(utf8.encode(key), value));
+    final Map<String, int> map =
+        data.map((key, value) => MapEntry(key, value));
 
-    List<int> keyByteArray = utf8.encode(passphrase2 + passphrase1);
-    List<int> keyHash = hashSHA256(keyByteArray);
-
-    if (map.containsKey(keyHash)) {
-      map.remove(keyHash);
-      final data = map.map((key, value) => MapEntry(utf8.decode(key), value));
-      await FileStore.writeLocalData(data);
+    final keyByteArray = utf8.encode(passphrase2 + passphrase1);
+    final keyHash = hashSHA256(keyByteArray);
+    final hashStr = utf8.decode(keyHash);
+    if (map.remove(hashStr) != null) {
+      await FileStore.writeLocalData(map);
     }
   }
 }

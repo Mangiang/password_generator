@@ -5,23 +5,27 @@ import 'package:yaml/yaml.dart';
 import 'package:yaml_writer/yaml_writer.dart';
 
 class FileStore {
+  static const localFileDir = 'password_generator';
   static const localFileName = 'password_generator.yml';
 
   static Future<String> get localPath async {
     final directory = await getApplicationDocumentsDirectory();
-
-    return directory.path;
+    return '${directory.path}${Platform.pathSeparator}$localFileDir${Platform.pathSeparator}$localFileName';
   }
 
   static Future<Map<String, int>> get localData async {
-    var localFile =
-        File('${await localPath}${Platform.pathSeparator}$localFileName');
+    final localFile = File(await localPath);
+    localFile.create(recursive: true);
 
     if (!await localFile.exists()) {
       return {};
     }
+    final localData = await localFile.readAsString();
+    if (localData.isEmpty){
+      return {};
+    }
 
-    final yamlData = loadYaml(await localFile.readAsString()) as YamlMap;
+    final yamlData = loadYaml(localData) as YamlMap;
     final Map<String, int> data =
         yamlData.map((key, value) => MapEntry(key, value));
     return data;
@@ -30,8 +34,7 @@ class FileStore {
   static Future<void> writeLocalData(Map<String, int> data) async {
     var yamlWriter = YAMLWriter();
     var yamlDocString = yamlWriter.write(data);
-    var localFile =
-        File('${await localPath}${Platform.pathSeparator}$localFileName');
+    var localFile = File(await localPath);
     await localFile.writeAsString(yamlDocString);
   }
 }
