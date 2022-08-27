@@ -1,7 +1,7 @@
-import 'dart:collection';
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
+import 'package:password_generator/file_store.dart';
 import 'package:password_generator/state/PasswordState.dart';
 
 class PasswordGenerator {
@@ -48,14 +48,19 @@ class PasswordGenerator {
           charIdx
       ];
 
-  static String getPassword(PasswordState state) {
+  static Future<String> getPassword(PasswordState state) async {
     String passphrase1 = state.passphrase1;
     String passphrase2 = state.passphrase2;
     int desiredLength = state.desiredLength;
-    HashMap<List<int>, int> map = HashMap<List<int>, int>();
+    final data = await localData;
+    final Map<List<int>, int> map =
+        data.map((key, value) => MapEntry(utf8.encode(key), value));
 
+    List<int> keyByteArray = utf8.encode(passphrase2 + passphrase1);
+    List<int> keyHash = hashSHA256(keyByteArray);
     List<int> byteArray = utf8.encode(passphrase1 + passphrase2);
-    List<int> hash = repeatHash256(byteArray, map);
+    final hashCount = await getHashCount(keyHash, map);
+    List<int> hash = repeatHash256(byteArray, hashCount);
 
     List<int> encodedPassphrase2 = utf8.encode(passphrase2);
     List<int> charsPool = getShuffledCharactersPool(encodedPassphrase2,
@@ -104,7 +109,8 @@ class PasswordGenerator {
     int charPoolLength = charsPool.length;
     for (int charIdx = 0; charIdx < charsPool.length; charIdx++) {
       int charValue = charsPool[charIdx];
-      int rawIdx = charValue + salt[(charValue + charIdx) % saltLength] * charIdx;
+      int rawIdx =
+          charValue + salt[(charValue + charIdx) % saltLength] * charIdx;
 
       int tmp = charsPool[rawIdx % charPoolLength];
       charsPool[charIdx] = tmp;
@@ -114,20 +120,21 @@ class PasswordGenerator {
     return charsPool;
   }
 
-  static List<int> repeatHash256(List<int> bytes, HashMap<List<int>, int> map) {
+  static List<int> repeatHash256(List<int> bytes, int hashCount) {
     List<int> hash = hashSHA256(bytes);
-    int count = getHashCount(hash, map);
 
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < hashCount; i++) {
       hash = hashSHA256(hash);
     }
 
     return hash;
   }
 
-  static int getHashCount(List<int> key, HashMap<List<int>, int> map) {
+  static Future<int> getHashCount(
+      List<int> key, Map<List<int>, int> map) async {
     if (!map.containsKey(key)) {
       map[key] = 1;
+      await updateDataFile(map);
     }
 
     return map[key]!;
@@ -135,4 +142,9 @@ class PasswordGenerator {
 
   static List<int> hashSHA256(List<int> bytes) =>
       utf8.encode(sha256.convert(bytes).toString());
+
+  static Future<void> updateDataFile(Map<List<int>, int> map) async {
+    final data = map.map((key, value) => MapEntry(utf8.decode(key), value));
+    await writeLocalData(data);
+  }
 }

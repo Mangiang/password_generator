@@ -11,9 +11,9 @@ class ActionsRow extends StatefulWidget {
 }
 
 class _ActionsRowState extends State<ActionsRow> {
-  void GeneratePassword(PasswordState state) {
+  Future<void> GeneratePassword(PasswordState state) async {
     if (state.passphrase1.isNotEmpty && state.passphrase2.isNotEmpty) {
-      state.updatePassword(PasswordGenerator.getPassword(state));
+      state.updatePassword(await PasswordGenerator.getPassword(state));
     }
   }
 
