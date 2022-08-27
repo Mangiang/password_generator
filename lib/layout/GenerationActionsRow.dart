@@ -3,10 +3,9 @@ import 'package:password_generator/state/PasswordState.dart';
 import 'package:provider/provider.dart';
 
 import '../components/CustomButton.dart';
+import '../components/DeletionConfirmation.dart';
 import '../state/PasswordState.dart';
 import '../utils/PasswordGenerator.dart';
-
-enum DeleteDialogAction { cancel, delete }
 
 class ActionsRow extends StatefulWidget {
   const ActionsRow({Key? key}) : super(key: key);
@@ -33,32 +32,6 @@ class _ActionsRowState extends State<ActionsRow> {
   @override
   Widget build(BuildContext context) =>
       Consumer<PasswordState>(builder: (context, state, child) {
-        AlertDialog alert = AlertDialog(
-          title: const Text("Do you really want to delete this entry ?"),
-          content: const Text(
-            "Warning: This action is irreversible !",
-          ),
-          actions: [
-            CustomButton(
-              type: ButtonType.neutral,
-              text: 'Cancel',
-              enabled: true,
-              onPressed: () =>
-                  Navigator.pop(context, DeleteDialogAction.cancel),
-            ),
-            CustomButton(
-              type: ButtonType.danger,
-              text: 'Delete anyways',
-              enabled: true,
-              onPressed: () =>
-                  Navigator.pop(context, DeleteDialogAction.delete),
-            ),
-          ],
-          backgroundColor: const Color(0xff22272e),
-          titleTextStyle: const TextStyle(color: Colors.white, fontSize: 20),
-          contentTextStyle: const TextStyle(color: Colors.red, fontSize: 16),
-        );
-
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -68,9 +41,10 @@ class _ActionsRowState extends State<ActionsRow> {
                 text: 'Delete entry',
                 enabled: areButtonsEnabled(state),
                 onPressed: () async {
-                  final response =
-                      await showDialog(context: context, builder: (context) => alert)
-                          as DeleteDialogAction;
+                  final response = await showDialog(
+                          context: context,
+                          builder: (context) => const CustomCheckbox())
+                      as DeleteDialogAction?;
                   if (response == DeleteDialogAction.delete) {
                     PasswordGenerator.removeFromDataFile(state);
                   }
