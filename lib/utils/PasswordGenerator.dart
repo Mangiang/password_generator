@@ -52,7 +52,7 @@ class PasswordGenerator {
     String passphrase1 = state.passphrase1;
     String passphrase2 = state.passphrase2;
     int desiredLength = state.desiredLength;
-    final data = await localData;
+    final data = await FileStore.localData;
     final Map<List<int>, int> map =
         data.map((key, value) => MapEntry(utf8.encode(key), value));
 
@@ -145,6 +145,23 @@ class PasswordGenerator {
 
   static Future<void> updateDataFile(Map<List<int>, int> map) async {
     final data = map.map((key, value) => MapEntry(utf8.decode(key), value));
-    await writeLocalData(data);
+    await FileStore.writeLocalData(data);
+  }
+
+  static Future<void> removeFromDataFile(PasswordState state) async {
+    String passphrase1 = state.passphrase1;
+    String passphrase2 = state.passphrase2;
+    final data = await FileStore.localData;
+    final Map<List<int>, int> map =
+        data.map((key, value) => MapEntry(utf8.encode(key), value));
+
+    List<int> keyByteArray = utf8.encode(passphrase2 + passphrase1);
+    List<int> keyHash = hashSHA256(keyByteArray);
+
+    if (map.containsKey(keyHash)) {
+      map.remove(keyHash);
+      final data = map.map((key, value) => MapEntry(utf8.decode(key), value));
+      await FileStore.writeLocalData(data);
+    }
   }
 }
