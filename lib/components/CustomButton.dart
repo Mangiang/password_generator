@@ -7,8 +7,8 @@ enum ColorState {
   backgroundColorHoverEnter,
   backgroundColorHoverExit,
   textColorDefault,
+  textColorDisabled,
   textColorHoverEnter,
-  textColorHoverExit,
 }
 
 const Map<ButtonType, Map<ColorState, Color>> colors = {
@@ -17,24 +17,24 @@ const Map<ButtonType, Map<ColorState, Color>> colors = {
     ColorState.backgroundColorHoverEnter: Color(0xffc93c37),
     ColorState.backgroundColorHoverExit: Color(0xff2d333b),
     ColorState.textColorDefault: Color(0xffc93c37),
+    ColorState.textColorDisabled: Color(0xff811815),
     ColorState.textColorHoverEnter: Colors.white,
-    ColorState.textColorHoverExit: Color(0xffc93c37),
   },
   ButtonType.success: {
     ColorState.backgroundColorDefault: Color(0xff2d333b),
     ColorState.backgroundColorHoverEnter: Color(0xff347d39),
     ColorState.backgroundColorHoverExit: Color(0xff2d333b),
     ColorState.textColorDefault: Color(0xff347d39),
+    ColorState.textColorDisabled: Color(0xff2a4d2d),
     ColorState.textColorHoverEnter: Colors.white,
-    ColorState.textColorHoverExit: Color(0xff347d39),
   },
   ButtonType.neutral: {
     ColorState.backgroundColorDefault: Color(0xff2d333b),
     ColorState.backgroundColorHoverEnter: Color(0xff9e9e9e),
     ColorState.backgroundColorHoverExit: Color(0xff2d333b),
     ColorState.textColorDefault: Color(0xff9e9e9e),
+    ColorState.textColorDisabled: Color(0xff9e9e9e),
     ColorState.textColorHoverEnter: Colors.white,
-    ColorState.textColorHoverExit: Color(0xff9e9e9e),
   }
 };
 
@@ -68,28 +68,30 @@ class _CustomButtonState extends State<CustomButton> {
   }
 
   @override
-  Widget build(BuildContext context) => ElevatedButton(
-        onPressed: widget.enabled ? widget.onPressed : null,
-        child: Text(
-          widget.text,
-          style: TextStyle(
-            color: textColor,
-          ),
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: widget.enabled ? widget.onPressed : null,
+      child: Text(
+        widget.text,
+        style: TextStyle(
+          color: !widget.enabled ? colors[widget.type]![ColorState.textColorDisabled]! : textColor,
         ),
-        onHover: (bool isHover) {
-          if (widget.enabled) {
-            setState(() {
-              buttonColor = isHover
-                  ? colors[widget.type]![ColorState.backgroundColorHoverEnter]!
-                  : colors[widget.type]![ColorState.backgroundColorHoverExit]!;
-              textColor = isHover
-                  ? colors[widget.type]![ColorState.textColorHoverEnter]!
-                  : colors[widget.type]![ColorState.textColorHoverExit]!;
-            });
-          }
-        },
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(buttonColor),
-        ),
-      );
+      ),
+      onHover: (bool isHover) {
+        if (widget.enabled) {
+          setState(() {
+            buttonColor = isHover
+                ? colors[widget.type]![ColorState.backgroundColorHoverEnter]!
+                : colors[widget.type]![ColorState.backgroundColorHoverExit]!;
+            textColor = isHover
+                ? colors[widget.type]![ColorState.textColorHoverEnter]!
+                : colors[widget.type]![ColorState.textColorDefault]!;
+          });
+        }
+      },
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all<Color>(buttonColor),
+      ),
+    );
+  }
 }
