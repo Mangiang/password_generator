@@ -9,8 +9,10 @@ A simple password generator
     <img src="./docs/warning.png" alt="warning" width="100" height="100">
 </p>
 
+<p>
+<img src="./docs/passwordGeneratorScreenshotAndroid.png" alt="PasswordGeneratorScreenshotAndroid" width="auto" height="500">
 <img src="./docs/passwordGeneratorScreenshotWindows.png" alt="PasswordGeneratorScreenshotWindows" width="500" height="auto">
-<img src="./docs/passwordGeneratorScreenshotAndroid.png" alt="PasswordGeneratorScreenshotAndroid" width="500" height="auto">
+</p>
 
 ## How to run
 
