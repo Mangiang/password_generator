@@ -16,6 +16,8 @@ class GenerationForm extends StatefulWidget {
 }
 
 class _GenerationFormState extends State<GenerationForm> {
+  bool isOptionPanelOpen = false;
+
   @override
   Widget build(BuildContext context) => Column(
         children: [
@@ -50,61 +52,90 @@ class _GenerationFormState extends State<GenerationForm> {
             },
           ),
           const SizedBox(height: 40),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          ExpansionPanelList(
+            elevation: 4,
+            dividerColor: Colors.white,
+            expandedHeaderPadding: EdgeInsets.zero,
             children: [
-              Consumer<PasswordState>(
-                builder: (context, state, child) {
-                  return PasswordInput(
-                    onChanged: (newValue) => state.updateblacklist(newValue),
-                    enableVisibility: false,
-                    label: "Blacklist characters",
-                  );
-                },
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                    children: [
-                      Consumer<PasswordState>(
-                        builder: (context, state, child) => CustomCheckbox(
-                          label: "Include lower case",
-                          isChecked: state.includeLowerCase,
-                          onChanged: state.updateIncludeLowerCase,
-                        ),
-                      ),
-                      Consumer<PasswordState>(
-                        builder: (context, state, child) => CustomCheckbox(
-                          label: "Include upper case",
-                          isChecked: state.includeUpperCase,
-                          onChanged: state.updateIncludeUpperCase,
-                        ),
-                      ),
-                    ],
+              ExpansionPanel(
+                isExpanded: isOptionPanelOpen,
+                headerBuilder: (context, isOpen) => const Center(
+                  child: Text(
+                    "~~~ Options ~~~",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white),
                   ),
-                  Column(
-                    children: [
-                      Consumer<PasswordState>(
-                        builder: (context, state, child) => CustomCheckbox(
-                          label: "Include numbers",
-                          isChecked: state.includeNumbers,
-                          onChanged: state.updateIncludeNumber,
+                ),
+                body: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Consumer<PasswordState>(
+                      builder: (context, state, child) {
+                        return PasswordInput(
+                          onChanged: (newValue) =>
+                              state.updateblacklist(newValue),
+                          enableVisibility: false,
+                          label: "Blacklist characters",
+                        );
+                      },
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Column(
+                          children: [
+                            Consumer<PasswordState>(
+                              builder: (context, state, child) =>
+                                  CustomCheckbox(
+                                label: "Include lower case",
+                                isChecked: state.includeLowerCase,
+                                onChanged: state.updateIncludeLowerCase,
+                              ),
+                            ),
+                            Consumer<PasswordState>(
+                              builder: (context, state, child) =>
+                                  CustomCheckbox(
+                                label: "Include upper case",
+                                isChecked: state.includeUpperCase,
+                                onChanged: state.updateIncludeUpperCase,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      Consumer<PasswordState>(
-                        builder: (context, state, child) => CustomCheckbox(
-                          label: "Include symbols",
-                          isChecked: state.includeSymbols,
-                          onChanged: state.updateIncludeSymbols,
+                        Column(
+                          children: [
+                            Consumer<PasswordState>(
+                              builder: (context, state, child) =>
+                                  CustomCheckbox(
+                                label: "Include numbers",
+                                isChecked: state.includeNumbers,
+                                onChanged: state.updateIncludeNumber,
+                              ),
+                            ),
+                            Consumer<PasswordState>(
+                              builder: (context, state, child) =>
+                                  CustomCheckbox(
+                                label: "Include symbols",
+                                isChecked: state.includeSymbols,
+                                onChanged: state.updateIncludeSymbols,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
+                backgroundColor: const Color(0xff242930),
+// const Color(0xff2d333b),
+// const Color(0xff22272e)
+                canTapOnHeader: true,
               ),
             ],
-          ),
+            expansionCallback: (i, isOpen) {
+              setState(() => isOptionPanelOpen = !isOpen);
+            },
+          )
         ],
       );
 }

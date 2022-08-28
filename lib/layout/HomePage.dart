@@ -15,13 +15,18 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: const Color(0xff22272e),
-        body: Center(
-          child: FractionallySizedBox(
-            widthFactor: .8,
-            heightFactor: .8,
+        body: FractionallySizedBox(
+          widthFactor: .9,
+          alignment: Alignment.center,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(60, 20, 0, 60),
+            scrollDirection: Axis.vertical,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: const <Widget>[
+                SizedBox(height: 40),
                 GenerationForm(),
                 SizedBox(height: 40),
                 ActionsRow(),
