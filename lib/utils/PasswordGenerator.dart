@@ -50,15 +50,30 @@ class PasswordGenerator {
       ];
 
   static List<int> generateKeyHash(PasswordState state) {
+    final blacklistSumChar = sumBlacklist(state.blacklist);
+
     final keyByteArray = utf8.encode(state.passphrase1 +
         state.passphrase2 +
         state.desiredLength.toString() +
-        state.blacklist +
+        utf8.decode([blacklistSumChar]) +
         (state.includeLowerCase ? 'L' : '') +
         (state.includeUpperCase ? 'U' : '') +
         (state.includeNumbers ? 'N' : '') +
         (state.includeSymbols ? 'S' : ''));
     return hashSHA256(keyByteArray);
+  }
+
+  static int sumBlacklist(String blacklist) {
+    final Iterable<List<int>> blacklistBytesArray =
+        blacklist.split('').map((elt) => utf8.encode(elt));
+    final Iterable<int> blacklistBytes = blacklistBytesArray.map((elt) =>
+        elt.reduce((int previousValue, int currentValue) =>
+            previousValue + currentValue));
+    final blacklistSum = blacklistBytes.fold(0, (int prev, elt) => prev + elt);
+    final blacklistSumCharacter =
+        blacklistSum % ("~".codeUnitAt(0) - "!".codeUnitAt(0)) +
+            "!".codeUnitAt(0);
+    return blacklistSumCharacter;
   }
 
   static Future<String> getPassword(
