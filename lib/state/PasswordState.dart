@@ -52,7 +52,8 @@ class PasswordState extends ChangeNotifier {
   }
 
   void updateblacklist(String newBlacklist) {
-    blacklist = newBlacklist;
+    final blacklistSet = newBlacklist.split('').toSet();
+    blacklist = blacklistSet.join('');
     notifyListeners();
   }
 }
