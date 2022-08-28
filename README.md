@@ -18,6 +18,11 @@ A simple password generator
 
 Grab a binary in the release section of this repository.
 
+Note that the application relies on a local file created and updated by this application for the password regeneration.
+It is determined by the `path_provider` package, usually:
+- Windows: `C:\Users\<Username>\OneDrive\Documents\password_generator`
+- Android: `/data/data/com.github.mangiang.password-generator`
+
 ## How to build
 
 ### Android
