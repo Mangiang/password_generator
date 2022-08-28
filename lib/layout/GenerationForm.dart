@@ -87,7 +87,7 @@ class _GenerationFormState extends State<GenerationForm> {
                             Consumer<PasswordState>(
                               builder: (context, state, child) =>
                                   CustomCheckbox(
-                                label: "Include lower case",
+                                label: "lower case",
                                 isChecked: state.includeLowerCase,
                                 onChanged: state.updateIncludeLowerCase,
                               ),
@@ -95,7 +95,7 @@ class _GenerationFormState extends State<GenerationForm> {
                             Consumer<PasswordState>(
                               builder: (context, state, child) =>
                                   CustomCheckbox(
-                                label: "Include upper case",
+                                label: "upper case",
                                 isChecked: state.includeUpperCase,
                                 onChanged: state.updateIncludeUpperCase,
                               ),
@@ -107,7 +107,7 @@ class _GenerationFormState extends State<GenerationForm> {
                             Consumer<PasswordState>(
                               builder: (context, state, child) =>
                                   CustomCheckbox(
-                                label: "Include numbers",
+                                label: "numbers",
                                 isChecked: state.includeNumbers,
                                 onChanged: state.updateIncludeNumber,
                               ),
@@ -115,7 +115,7 @@ class _GenerationFormState extends State<GenerationForm> {
                             Consumer<PasswordState>(
                               builder: (context, state, child) =>
                                   CustomCheckbox(
-                                label: "Include symbols",
+                                label: "symbols",
                                 isChecked: state.includeSymbols,
                                 onChanged: state.updateIncludeSymbols,
                               ),

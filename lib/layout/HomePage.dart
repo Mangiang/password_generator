@@ -15,25 +15,31 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: const Color(0xff22272e),
-        body: FractionallySizedBox(
-          widthFactor: .9,
-          alignment: Alignment.center,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(60, 20, 0, 60),
-            scrollDirection: Axis.vertical,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: const <Widget>[
-                SizedBox(height: 40),
-                GenerationForm(),
-                SizedBox(height: 40),
-                ActionsRow(),
-                SizedBox(height: 20),
-                PasswordDisplay()
-              ],
-            ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(60, 40, 0, 60),
+          scrollDirection: Axis.vertical,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              FractionallySizedBox(
+                widthFactor: .9,
+                alignment: Alignment.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: const <Widget>[
+                    SizedBox(height: 40),
+                    GenerationForm(),
+                    SizedBox(height: 40),
+                    ActionsRow(),
+                    SizedBox(height: 20),
+                    PasswordDisplay()
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       );

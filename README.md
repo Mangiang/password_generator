@@ -23,3 +23,7 @@ Grab a binary in the release section of this repository.
 * Run `flutter build windows` to build the application
 * The resulting artifact is located at `[project]/build/windows/runner/Release`
 * [Optional] Run `flutter pub run msix:create` to create an msix installer
+
+
+Sources:
+- warning icon: [stickpng.com](https://www.stickpng.com/img/miscellaneous/safety-symbols-and-signs/warning-icon)
