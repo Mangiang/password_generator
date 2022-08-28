@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'CustomButton.dart';
 
-enum DeleteDialogAction { cancel, delete }
+enum GenerationPassDialogAction { cancel, increase }
 
-class DeletionConfirmation extends StatelessWidget {
-  const DeletionConfirmation({Key? key}) : super(key: key);
+class GenerationPassConfirmation extends StatelessWidget {
+  const GenerationPassConfirmation({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-        title: const Text("Do you really want to delete this entry ?"),
+        title: const Text("Do you really want to increase this generation pass ?"),
         content: const Text(
           "Warning: This action is irreversible !",
         ),
@@ -18,13 +18,13 @@ class DeletionConfirmation extends StatelessWidget {
             type: ButtonType.neutral,
             text: 'Cancel',
             enabled: true,
-            onPressed: () => Navigator.pop(context, DeleteDialogAction.cancel),
+            onPressed: () => Navigator.pop(context, GenerationPassDialogAction.cancel),
           ),
           CustomButton(
             type: ButtonType.danger,
-            text: 'Delete anyways',
+            text: 'Increase',
             enabled: true,
-            onPressed: () => Navigator.pop(context, DeleteDialogAction.delete),
+            onPressed: () => Navigator.pop(context, GenerationPassDialogAction.increase),
           ),
         ],
         backgroundColor: const Color(0xff22272e),

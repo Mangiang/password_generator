@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
                 GenerationForm(),
                 SizedBox(height: 40),
                 ActionsRow(),
-                SizedBox(height: 40),
+                SizedBox(height: 20),
                 PasswordDisplay()
               ],
             ),

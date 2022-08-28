@@ -1,5 +1,7 @@
+import 'dart:collection';
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:yaml/yaml.dart';
 import 'package:yaml_writer/yaml_writer.dart';
@@ -13,25 +15,29 @@ class FileStore {
     return '${directory.path}${Platform.pathSeparator}$localFileDir${Platform.pathSeparator}$localFileName';
   }
 
-  static Future<Map<String, int>> get localData async {
+  static Future<LinkedHashMap<String, int>> get localData async {
     final localFile = File(await localPath);
     localFile.create(recursive: true);
 
     if (!await localFile.exists()) {
-      return {};
+      return LinkedHashMap(equals: const DeepCollectionEquality().equals);
     }
     final localData = await localFile.readAsString();
-    if (localData.isEmpty){
-      return {};
+    if (localData.isEmpty) {
+      return LinkedHashMap(equals: const DeepCollectionEquality().equals);
     }
 
     final yamlData = loadYaml(localData) as YamlMap;
-    final Map<String, int> data =
-        yamlData.map((key, value) => MapEntry(key, value));
+    final data = LinkedHashMap<String, int>(
+        equals: const DeepCollectionEquality().equals);
+
+    for (final keyVal in yamlData.entries) {
+      data[keyVal.key] = keyVal.value;
+    }
     return data;
   }
 
-  static Future<void> writeLocalData(Map<String, int> data) async {
+  static Future<void> writeLocalData(LinkedHashMap<String, int> data) async {
     var yamlWriter = YAMLWriter();
     var yamlDocString = yamlWriter.write(data);
     var localFile = File(await localPath);

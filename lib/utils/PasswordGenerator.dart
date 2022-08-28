@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
@@ -60,16 +61,16 @@ class PasswordGenerator {
     return hashSHA256(keyByteArray);
   }
 
-  static Future<String> getPassword(PasswordState state) async {
+  static Future<String> getPassword(
+      PasswordState state, bool increaseRegenerationCount) async {
     final passphrase1 = state.passphrase1;
     final passphrase2 = state.passphrase2;
     final desiredLength = state.desiredLength;
     final data = await FileStore.localData;
-    final Map<List<int>, int> map =
-        data.map((key, value) => MapEntry(utf8.encode(key), value));
 
     final keyHash = generateKeyHash(state);
-    final hashCount = await getHashCount(keyHash, map);
+    final hashCount =
+        await getHashCount(keyHash, data, increaseRegenerationCount);
     final byteArray = utf8.encode(passphrase1 + passphrase2);
     final hash = repeatHash256(byteArray, hashCount);
 
@@ -141,11 +142,18 @@ class PasswordGenerator {
     return hash;
   }
 
-  static Future<int> getHashCount(
-      List<int> key, Map<List<int>, int> map) async {
+  static Future<int> getHashCount(List<int> keyBytes,
+      LinkedHashMap<String, int> map, bool increaseRegenerationCount) async {
+    final key = utf8.decode(keyBytes);
     if (!map.containsKey(key)) {
       map[key] = 1;
-      await updateDataFile(map);
+
+      await FileStore.writeLocalData(map);
+    }
+
+    if (increaseRegenerationCount) {
+      map[key] = map[key]! + 1;
+      await FileStore.writeLocalData(map);
     }
 
     return map[key]!;
@@ -154,14 +162,10 @@ class PasswordGenerator {
   static List<int> hashSHA256(List<int> bytes) =>
       utf8.encode(sha256.convert(bytes).toString());
 
-  static Future<void> updateDataFile(Map<List<int>, int> map) async {
-    final data = map.map((key, value) => MapEntry(utf8.decode(key), value));
-    await FileStore.writeLocalData(data);
-  }
-
   static Future<void> removeFromDataFile(PasswordState state) async {
     final data = await FileStore.localData;
-    final Map<String, int> map = data.map((key, value) => MapEntry(key, value));
+    final map = data.map((key, value) => MapEntry(key, value))
+        as LinkedHashMap<String, int>;
 
     final hashStr = utf8.decode(generateKeyHash(state));
     if (map.remove(hashStr) != null) {
